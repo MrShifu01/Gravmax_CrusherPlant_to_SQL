@@ -1,7 +1,7 @@
 import pandas as pd
 from collections import OrderedDict
 
-def concatenate_values(df):
+def concatenate_header_values(df):
     for col in df.columns:
             val_1 = df.at[1, col]
             val_2 = df.at[2, col]

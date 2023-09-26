@@ -7,7 +7,7 @@
 
 # Import Function Components
 from components.excel_handling import drop_columns, forward_fill, read_excel_file, drop_redundant_datetime_column, set_higher_level_labels, create_groupnames_column
-from components.data_transformation import concatenate_values, drop_unnecessary_rows, set_values_based_on_rows, handle_datetime_rows, assign_new_header, replace_redundant_values, rename_and_format_columns, concatenate_df_values
+from components.data_transformation import concatenate_header_values, drop_unnecessary_rows, set_values_based_on_rows, handle_datetime_rows, assign_new_header, replace_redundant_values, rename_and_format_columns, concatenate_df_values
 from components.database_handling import connect_to_sql, sql_column_mapping, check_and_create_table, upsert_data_to_sql
 
 #& FUNCTION TO CONVERT THE EXCEL -> DATAFRAME -> SQL
@@ -44,7 +44,7 @@ def excel_to_sql_gravmax(file_path, db_name, table_name, server_name, username, 
 
     # Loop through columns and concatenate values from row 2 and 3
     # @components/data_transformation.py
-    df = concatenate_values(df)
+    df = concatenate_header_values(df)
 
     # Drop unnecessary rows
     # @components/data_transformation.py
