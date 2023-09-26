@@ -1,56 +1,49 @@
-import pandas as pd
 import pyodbc
 
-def csv_to_sql(file_path, db_name, table_name, server_name, username, password):
-    try:
-        df = pd.read_csv(file_path)
-    except Exception as e:
-        print(f"Could not read CSV file {file_path}: {e}")
-
-    # Step 2: Remove whitespace from strings
-    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
-
-     # Clean column names to remove special characters and limit the length to 128 characters
-    df.columns = ["".join(e for e in col if e.isalnum() or e.isspace()).strip()[:128] for col in df.columns]
-
-    # Shorten column names to fit SQL Server's limit
-    df.columns = [col[:128] for col in df.columns]
-
-    # Replace NaN values with a default value (e.g., an empty string)
-    df.fillna("", inplace=True)
-
-    print(df.head())
-
-    conn_str = f'DRIVER={{SQL Server}};SERVER={server_name};DATABASE=master;UID={username};PWD={password}'
-
-    try:
-        conn = pyodbc.connect(conn_str, autocommit=True)
-        cursor = conn.cursor()
-        cursor.execute(f"IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'{db_name}') CREATE DATABASE {db_name}")
-        conn.close()
-    except Exception as e:
-        print(f"Could not create or connect to database: {e}")
-        return
-
+def connect_to_sql(server_name, db_name, username, password):
     conn_str = f'DRIVER={{SQL Server}};SERVER={server_name};DATABASE={db_name};UID={username};PWD={password}'
-
+    
     try:
         conn = pyodbc.connect(conn_str)
         cursor = conn.cursor()
     except Exception as e:
         print(f"Could not connect to database: {e}")
         return
+    return conn, cursor
 
+def sql_column_mapping(df, cursor):
+    cursor.execute("SELECT old_name, new_name FROM column_mapping")
+    mappings = cursor.fetchall()
+    column_mapping = {old: new for old, new in mappings}
+
+    # Compare column names
+    df_columns = set(df.columns)
+    mapping_old_columns = set(column_mapping.keys())
+
+    mismatches = df_columns - mapping_old_columns
+
+    if mismatches:
+        # Raise an alert or handle as needed
+        alert_message = f"Column name mismatch detected! The following columns in the DataFrame don't match the SQL mapping: {', '.join(mismatches)}"
+        # Here you could potentially send an email, raise an exception, print to a log file, etc.
+        raise ValueError(alert_message)
+
+    # If no mismatches, can continue with renaming process
+    df.rename(columns=column_mapping, inplace=True)
+
+    return df
+
+def check_and_create_table(cursor, table_name, df):
     try:
         cols = ", ".join([f"[{col}] NVARCHAR(MAX)" if col != 'PrimaryKey' else "[PrimaryKey] INT" for col in df.columns])
         cursor.execute(f"""IF OBJECT_ID('{table_name}', 'U') IS NULL CREATE TABLE {table_name} ([PrimaryKey] INT IDENTITY(1,1) PRIMARY KEY, {cols})""")
 
-        # print(f"Table {table_name} created successfully with columns: {cols}")
+    # print(f"Table {table_name} created successfully with columns: {cols}")
     except Exception as e:
         print(f"Could not create table: {e}")
         return
-
-    # Prepare data and query for the MERGE operation
+    
+def upsert_data_to_sql(conn, cursor, table_name, df, file_path, db_name):
     try:
         # Get the list of columns excluding 'PrimaryKey'
         columns = [col for col in df.columns if col != 'PrimaryKey']
@@ -80,8 +73,6 @@ def csv_to_sql(file_path, db_name, table_name, server_name, username, password):
     except Exception as e:
         print(f"Could not perform UPSERT operation: {e}")
         return
-
+    
     print(f"Data from {file_path} has been written to {db_name}.{table_name}")
     return True
-
-# Usage: You'd call this function with the appropriate arguments to use it.
