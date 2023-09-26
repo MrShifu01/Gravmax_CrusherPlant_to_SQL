@@ -99,8 +99,7 @@ def excel_to_sql_gravmax(file_path, db_name, table_name, server_name, username, 
 
     # SQL mapping of columns
     # @components/database_handling.py
-    # TODO Add send email if columns mismatch
-    # ~ df = sql_column_mapping(df, cursor)
+    df = sql_column_mapping(df, cursor)
 
     # Check and create a table if no table exists
     # @components/database_handling.py

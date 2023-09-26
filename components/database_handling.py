@@ -1,4 +1,5 @@
 import pyodbc
+from components.send_email import send_email
 
 
 def connect_to_sql(server_name, db_name, username, password):
@@ -27,7 +28,7 @@ def sql_column_mapping(df, cursor):
     if mismatches:
         # Raise an alert or handle as needed
         alert_message = f"Column name mismatch detected! The following columns in the DataFrame don't match the SQL mapping: {', '.join(mismatches)}"
-        # Here you could potentially send an email, raise an exception, print to a log file, etc.
+        send_email('File Processed', alert_message)
         raise ValueError(alert_message)
 
     # If no mismatches, can continue with renaming process
