@@ -53,7 +53,6 @@ def excel_to_sql_gravmax(file_path, db_name, table_name, server_name, username, 
     # Filling the GroupNames values based on the row
     # components/data_transformation.py
     df = set_values_based_on_rows(df)
-    ordered_set = process_ordered_set(df)
     
     # Handling the datetime rows
     # components/data_transformation.py
