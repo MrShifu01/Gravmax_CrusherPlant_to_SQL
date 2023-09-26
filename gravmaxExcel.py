@@ -1,9 +1,9 @@
 
-#& Code to take the Gravmax "CrusherPlant" Excel file, 
-#& convert it to a dataframe, 
-#& clean it up and then add it to SQL database,
-#& and running to throught the column mapping 
-#& from the column_mapping SQL table.
+#^ Code to take the Gravmax "CrusherPlant" Excel file, 
+#^ convert it to a dataframe, 
+#^ clean it up and then add it to SQL database,
+#^ and running to throught the column mapping 
+#^ from the column_mapping SQL table.
 
 # Import Function Components
 from components.excel_handling import drop_columns, forward_fill, read_excel_file, drop_redundant_datetime_column, set_higher_level_labels, create_groupnames_column
