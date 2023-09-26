@@ -73,5 +73,3 @@ def concatenate_df_values(df):
         sub_df = df.loc[:, df.columns == col_name]
         result_df[col_name] = concatenate_values(sub_df)
     return result_df
-
-

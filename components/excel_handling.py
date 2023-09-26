@@ -8,6 +8,7 @@ def read_excel_file(file_path):
         return
     return df
 
+#! TEMPORARY, SPEAK TO CLIENT
 def set_higher_level_labels(df):
     df.loc[0, 6:13] = 'Secondary Crusher'
     df.loc[0, 13:20] = 'Tertiary Crusher'
