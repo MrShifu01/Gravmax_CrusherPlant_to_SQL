@@ -1,9 +1,9 @@
 
-# ^ Code to take the Gravmax "CrusherPlant" Excel file,
-# ^ convert it to a dataframe,
-# ^ clean it up and then add it to SQL database,
-# ^ and running to throught the column mapping
-# ^ from the column_mapping SQL table.
+# ^ Code to take the Gravmax "CrusherPlant" Excel file
+# ^ convert it to a Python dataframe
+# ^ clean it up and then add it to SQL database
+# ^ running to throught the column mapping
+# ^ from the column_mapping SQL table
 
 # Import Function Components
 from components.excel_handling import (drop_columns,
@@ -25,10 +25,8 @@ from components.database_handling import (connect_to_sql,
                                           check_and_create_table,
                                           upsert_data_to_sql)
 
-# & FUNCTION TO CONVERT THE EXCEL -> DATAFRAME -> SQL
 
-
-def excel_to_sql_gravmax(file_path, db_name, table_name, server_name, username, password):
+def crusher_plant_excel_to_sql(file_path, db_name, table_name, server_name, username, password):
 
     # & READING AND HANDLING THE EXCEL FILE
 
