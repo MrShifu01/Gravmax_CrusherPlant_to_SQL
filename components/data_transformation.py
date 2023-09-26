@@ -1,13 +1,15 @@
 import pandas as pd
 from collections import OrderedDict
 
+
 def concatenate_header_values(df):
     for col in df.columns:
-            val_1 = df.at[1, col]
-            val_2 = df.at[2, col]
-            if isinstance(val_1, str) and isinstance(val_2, str):
-                df.at[1, col] = val_1 + ' ' + val_2
+        val_1 = df.at[1, col]
+        val_2 = df.at[2, col]
+        if isinstance(val_1, str) and isinstance(val_2, str):
+            df.at[1, col] = val_1 + ' ' + val_2
     return df
+
 
 def drop_unnecessary_rows(df):
     df = df.drop([2, 3, 4, 5])
@@ -17,6 +19,7 @@ def drop_unnecessary_rows(df):
     df.drop(rows_to_drop, inplace=True)
     return df
 
+
 def set_values_based_on_rows(df):
     col_name = df.columns[2]
     row_1_value = df.loc[0, col_name]
@@ -24,14 +27,17 @@ def set_values_based_on_rows(df):
     df = df.reset_index(drop=True)
     return df
 
+
 def process_ordered_set(df):
     row_1_values = df.loc[0].tolist()
     ordered_set = list(OrderedDict.fromkeys(row_1_values))
     ordered_set = [item for item in ordered_set if isinstance(item, str)]
     return ordered_set
 
+
 def handle_datetime_rows(df):
-    datetime_rows = df[df[0].apply(lambda x: isinstance(x, pd.Timestamp))].copy()
+    datetime_rows = df[df[0].apply(
+        lambda x: isinstance(x, pd.Timestamp))].copy()
     new_df = df.copy()
     ordered_set = process_ordered_set(df)
     for group_name in ordered_set[2:]:
@@ -39,6 +45,7 @@ def handle_datetime_rows(df):
         temp_df['GroupNames'] = group_name
         new_df = new_df.append(temp_df, ignore_index=True)
     return new_df
+
 
 def replace_redundant_values(df):
     for col in df.columns[2:]:
@@ -48,12 +55,14 @@ def replace_redundant_values(df):
                 df.loc[index, col] = ''
     return df
 
+
 def assign_new_header(df):
     df = df.drop(0)
     df.columns = df.iloc[0]
     df = df.drop(1)
     df = df.reset_index(drop=True)
     return df
+
 
 def rename_and_format_columns(df):
     df.columns.values[0] = 'DateTime'
@@ -63,6 +72,7 @@ def rename_and_format_columns(df):
     df.columns = df.columns.str.strip()
     df.columns = df.columns.str.replace(r'[^a-zA-Z0-9]', '_', regex=True)
     return df
+
 
 def concatenate_df_values(df):
     def concatenate_values(x):

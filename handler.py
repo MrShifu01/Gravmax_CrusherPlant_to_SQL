@@ -10,6 +10,7 @@ from gravmaxExcel import excel_to_sql_gravmax
 # from email.mime.text import MIMEText
 # import base64
 
+
 class Handler(FileSystemEventHandler):
     def __init__(self, db_name, table_name, server_name, username, password):
         self.db_name = db_name
@@ -41,11 +42,11 @@ class Handler(FileSystemEventHandler):
         if file_path.endswith(".xlsx") or file_path.endswith(".xls"):
             print(f"New Excel file {file_path} has been created!")
             sleep(1)
-            success = excel_to_sql_gravmax(file_path, self.db_name, self.table_name, self.server_name, self.username, self.password)
+            success = excel_to_sql_gravmax(
+                file_path, self.db_name, self.table_name, self.server_name, self.username, self.password)
         else:
             print(f"Unsupported file type: {file_path}")
             return
 
         # if success:
         #     self.send_email('File Processed', f'File {file_path} has been successfully processed.')
-
